@@ -1,54 +1,75 @@
-// RecipeCard.js
-
 class RecipeCard extends HTMLElement {
-	// Called once when document.createElement('recipe-card') is called, or
-	// the element is written into the DOM directly as <recipe-card>
-	constructor() {
-		super(); // Inherit everything from HTMLElement
+  constructor() {
+    super();
 
-		// EXPOSE - START (All expose numbers start with A)
-		// A1. TODO - Attach the shadow DOM to this Web Component (leave the mode open)
-		// A2. TODO - Create an <article> element - This will hold our markup once our data is set
-		// A3. TODO - Create a style element - This will hold all of the styles for the Web Component
-		// A4. TODO - Insert all of the styles from cardTemplate.html into the <style> element you just made (copy everything INSIDE the <style> tag>)
-		// A5. TODO - Append the <style> and <article> elements to the Shadow DOM
-	}
+    const shadow = this.attachShadow({ mode: "open" });
 
-	/**
-	 * Called when the .data property is set on this element.
-	 *
-	 * For example:
-	 * let recipeCard = document.createElement('recipe-card'); // Calls constructor()
-	 * recipeCard.data = { foo: 'bar' } // Calls set data({ foo: 'bar' })
-	 *
-	 * @param {Object} data - The data to pass into the <recipe-card> must be of the
-	 *                        following format:
-	 *                        {
-	 *                          "imgSrc": "string",
-	 *                          "imgAlt": "string",
-	 *                          "titleLnk": "string",
-	 *                          "titleTxt": "string",
-	 *                          "organization": "string",
-	 *                          "rating": number,
-	 *                          "numRatings": number,
-	 *                          "lengthTime": "string",
-	 *                          "ingredients": "string"
-	 *                        }
-	 */
-	set data(data) {
-		// If nothing was passed in, return
-		if (!data) return;
+    const article = document.createElement("article");
+    const style = document.createElement("style");
 
-		// A6. TODO - Select the <article> we added to the Shadow DOM in the constructor
-		// A7. TODO - Set the contents of the <article> with the <article> template given in
-		//           cardTemplate.html and the data passed in (You should only have one <article>,
-		//           do not nest an <article> inside another <article>). You should use template
-		//           literals (template strings) and element.innerHTML for this.
-		// 			 Do NOT include the <article> tags within the innerHTML of the element you create.
-		//           Remember to replace all the placeholders in the template with the data passed in.
-		//           i.e. imgSrc, titleLnk, etc
-	}
+    style.textContent = `
+      * {
+        font-family: sans-serif;
+        box-sizing: border-box;
+      }
+
+      article {
+        width: 300px;
+        border: 1px solid rgb(223, 225, 229);
+        border-radius: 8px;
+        overflow: hidden;
+        margin: 10px;
+      }
+
+      img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      p {
+        margin: 8px 12px;
+      }
+
+      a {
+        text-decoration: none;
+        color: black;
+      }
+
+      .title {
+        font-size: 18px;
+        font-weight: bold;
+      }
+    `;
+
+    article.innerHTML = `
+      <img>
+      <p class="title"><a></a></p>
+      <p class="organization"></p>
+      <p class="rating"></p>
+      <p class="time"></p>
+      <p class="ingredients"></p>
+    `;
+
+    shadow.append(style, article);
+  }
+
+  set data(data) {
+    if (!data) return;
+
+    const article = this.shadowRoot.querySelector("article");
+
+    article.querySelector("img").src = data.imgSrc;
+    article.querySelector("img").alt = data.imgAlt;
+
+    article.querySelector("a").href = data.titleLink;
+    article.querySelector("a").textContent = data.titleText;
+
+    article.querySelector(".organization").textContent = data.organization;
+    article.querySelector(".rating").textContent = `Rating: ${data.rating} (${data.numRatings} ratings)`;
+    article.querySelector(".time").textContent = `Time: ${data.lengthTime}`;
+    article.querySelector(".ingredients").textContent = data.ingredients;
+  }
 }
 
-// A8. TODO - Define the Class as a customElement so that you can create
-//           'recipe-card' elements
+customElements.define("recipe-card", RecipeCard);
